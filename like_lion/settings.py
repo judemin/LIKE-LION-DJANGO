@@ -10,7 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import environ
 from pathlib import Path
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "index",
+    "gameauth",
 ]
 
 MIDDLEWARE = [
@@ -76,10 +82,22 @@ WSGI_APPLICATION = "like_lion.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "djongo",
+        "CLIENT": {
+            "host": "mongodb+srv://"
+            + env("DATABASE_USER")
+            + ":"
+            + env("DATABASE_PASSWORD")
+            + "@littlelion.qyzibec.mongodb.net/?retryWrites=true&w=majority",
+            "username": env("DATABASE_USER"),
+            "password": env("DATABASE_PASSWORD"),
+        },
     }
 }
+
+# CORS 설정
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = ("http://localhost:3000",)
 
 
 # Password validation
