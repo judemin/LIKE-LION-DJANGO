@@ -32,7 +32,7 @@ def signup(request):
             return JsonResponse({"msg": "Email already exists"}, status=400)
 
         # Hash the password
-        hashed_password = make_password(data["password"])
+        hashed_password = make_password(password)
 
         # Create Model, Save model
         user = Users(
