@@ -4,3 +4,6 @@ djongo
 django-cors-headers
 dnspython
 django-environ
+pymongo==3.12.3
+
+
