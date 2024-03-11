@@ -98,6 +98,9 @@ DATABASES = {
     }
 }
 
+# JWT_SECRET
+SECRET_KEY = env("JWT_SECRET")
+
 # CORS 설정
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = ("http://localhost:3000", "http://localhost:3001")
