@@ -1,9 +1,11 @@
 django
 djangorestframework
-djongo
 django-cors-headers
 dnspython
+# Env
 django-environ
+#DB
+djongo==1.3.6
 pymongo==3.12.3
 
 
