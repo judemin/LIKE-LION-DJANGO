@@ -11,6 +11,9 @@ import jwt
 from datetime import datetime, timedelta
 from django.conf import settings
 
+# Decorator
+from .decorators import jwt_required
+
 from .models import *
 from .serializers import *
 
@@ -50,29 +53,41 @@ def signup(request):
     except:
         return JsonResponse({"msg": "Failed"}, status=400)
 
+
 @csrf_exempt
 @api_view(["POST"])
 def login(request):
     try:
         data = JSONParser().parse(request)
-        email = data.get('email')
-        password = data.get('password')
+        email = data.get("email")
+        password = data.get("password")
 
         # User Auth
         user = Users.objects.filter(email=email).first()
 
         if user and check_password(password, user.password):
-            # Create JWT Token
+            # Create JWT
             payload = {
-                'id': str(user.id),  # MongoDB UID Str Transfer
-                'exp': datetime.utcnow() + timedelta(days=1),  # Expired Date
-                'iat': datetime.utcnow()  # Token Creation Time
+                "id": str(user._id),  # MongoDB UID Str Transfer
+                "exp": datetime.utcnow() + timedelta(days=1),  # Expired Date
+                "iat": datetime.utcnow(),  # Token Creation Time
             }
-            # Get settings.SECRET_KEY
-            accessToken = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+            # Encode JWT
+            accessToken = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
 
-            return JsonResponse({'token': accessToken}, status=200)
+            return JsonResponse(
+                {"msg": "Success", "name": user.name, "token": accessToken}, status=200
+            )
         else:
-            return JsonResponse({'msg': 'Invalid credentials'}, status=400)
+            return JsonResponse({"msg": "Invalid credentials"}, status=400)
     except Exception as e:
+        print(e)
         return JsonResponse({"msg": "Failed"}, status=400)
+
+
+@csrf_exempt
+@api_view(["POST"])
+@jwt_required
+def renewToken(request):
+    print(request.user_id)
+    return JsonResponse({"message": "You are viewing a protected resource"}, status=200)
